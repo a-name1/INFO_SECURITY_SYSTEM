@@ -1,0 +1,78 @@
+# ==================== 基础通用忽略 ====================
+# 操作系统临时文件
+.DS_Store       # MacOS
+Thumbs.db       # Windows
+*.tmp           # 所有临时文件
+*.swp           # Vim交换文件
+*.swo
+
+# Git本身的临时文件
+.git/           # （无需手动加，Git默认忽略，但防止误写）
+.gitignore~     # 编辑后的备份文件
+
+# ==================== Python项目专属 ====================
+# 虚拟环境（核心，必须忽略）
+venv/
+env/
+ENV/
+.venv/
+
+# 字节码/缓存文件
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/  # pytest缓存
+
+# 依赖包/安装记录
+*.egg-info/
+dist/
+build/
+requirements.txt.bak  # 依赖文件备份
+pip-wheel-metadata/
+
+# 日志文件（信息安全项目会产生大量日志，必忽略）
+logs/
+*.log
+*.log.*
+error.log
+access.log
+
+# ==================== 信息安全系统专属 ====================
+# 敏感配置文件（含密钥、数据库密码等）
+config/secret.ini    # 敏感配置（如加密密钥、API密钥）
+config/database.ini  # 数据库连接信息（账号/密码）
+.env                 # 环境变量文件（通用敏感配置）
+.ENV
+
+# 上传/输出文件（用户上传的文件、加密/解密结果）
+uploads/             # 上传的待处理文件
+outputs/             # 处理后的输出文件
+temp_files/          # 临时加密缓存
+
+# 数据库文件（本地测试用的sqlite，避免覆盖远程）
+database/*.db
+database/*.sqlite3
+database/*.db-journal
+
+# 测试/调试文件
+test_*.py            # 本地测试脚本
+debug.log
+*.pem.bak            # 证书备份文件
+
+# ==================== 可选忽略（按需添加） ====================
+# IDE/编辑器配置
+.idea/       # PyCharm
+.vscode/     # VS Code
+# 若需忽略单个VS Code文件，补充：
+.vscode/*
+*.sublime-*  # Sublime Text
+.project     # Eclipse
+
+# 打包/部署文件
+*.zip
+*.tar.gz
+deploy/      # 本地部署脚本（含服务器密码等）
+
+# 反向保留（示例：需要提交的配置模板）
+!config/template.ini  # 保留配置模板，忽略实际配置
+!database/init_db.py  # 保留数据库初始化脚本，忽略实际数据库文件
