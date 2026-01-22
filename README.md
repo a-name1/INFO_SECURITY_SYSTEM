@@ -905,7 +905,7 @@ A：运行 `run.bat` 脚本自动配置环境。
 A：编辑 `app.py` 中的 `app.run(port=5000)` 改为其他端口。
 
 ### Q6：图像恢复时出现413 Request Entity Too Large？
-A：编辑 `config.py` 中的 `MAX_CONTENT_LENGTH` 改为# 设置允许的最大上传大小，例如 64MB (根据你的图像大小调整)
+A：编辑 `config.py` 中的 `MAX_CONTENT_LENGTH` 改为设置允许的最大上传大小，例如 64MB (根据你的图像大小调整)
 app.config['MAX_CONTENT_LENGTH'] = 64 * 1024 * 1024其他端口。
 ---
 
