@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>使用帮助 - 信息安全技术系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .help-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .help-section {
+            margin: 30px 0;
+            padding: 25px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .help-section h3 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .example-code {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .tip-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .step-list {
+            list-style: none;
+            padding: 0;
+            counter-reset: step-counter;
+        }
+
+        .step-list li {
+            counter-increment: step-counter;
+            padding: 10px 0 10px 40px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .step-list li:before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 8px;
+            background: #3498db;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #bdc3c7;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .comparison-table th {
+            background: #34495e;
+            color: white;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="brand">信息安全技术系统</div>
+            <div class="nav-right">
+                <a href="{{ url_for('index') }}">首页</a>
+                <a href="javascript:history.back()">返回</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container help-container">
+        <h1>📚 使用帮助和指南</h1>
+
+        <!-- 快速开始 -->
+        <div class="help-section">
+            <h3>🚀 快速开始</h3>
+            <ol class="step-list">
+                <li><strong>访问首页</strong> - 打开系统首页了解功能</li>
+                <li><strong>用户注册</strong> - 点击"注册"创建新账户</li>
+                <li><strong>用户登录</strong> - 使用账户凭证登录系统</li>
+                <li><strong>选择功能</strong> - 选择要使用的密码算法或功能</li>
+                <li><strong>输入数据</strong> - 输入要加密的文本或文件</li>
+                <li><strong>执行操作</strong> - 点击相应按钮进行加密/解密</li>
+                <li><strong>查看结果</strong> - 结果会显示在页面下方</li>
+            </ol>
+        </div>
+
+        <!-- 经典密码 -->
+        <div class="help-section">
+            <h3>🔑 经典密码算法使用指南</h3>
+            
+            <h4>凯撒密码</h4>
+            <p><strong>工作原理：</strong>将文本中的每个字母向后移动固定数量的位置</p>
+            <p><strong>使用步骤：</strong></p>
+            <ol class="step-list">
+                <li>在文本框中输入要加密的明文</li>
+                <li>设置位移量（1-25之间）</li>
+                <li>点击"加密"生成密文</li>
+                <li>要解密，输入密文后点击"解密"</li>
+            </ol>
+            <div class="tip-box">
+                <strong>💡 提示：</strong>位移量为3是经典的凯撒密码配置
+            </div>
+
+            <h4>单表置换密码</h4>
+            <p><strong>工作原理：</strong>使用26字母的替换表进行一一对应的替换</p>
+            <p><strong>使用步骤：</strong></p>
+            <ol class="step-list">
+                <li>输入要加密的文本</li>
+                <li>选择密钥方式：
+                    <ul style="margin: 10px 0;">
+                        <li>自动生成：点击"生成密钥"</li>
+                        <li>手动输入：直接在密钥框输入26个不同字母</li>
+                    </ul>
+                </li>
+                <li>点击"加密"</li>
+                <li>解密时输入相同的密钥后点击"解密"</li>
+            </ol>
+            <div class="warning-box">
+                <strong>⚠️ 注意：</strong>密钥必须包含26个不同的字母，不能有重复
+            </div>
+
+            <h4>Playfair密码</h4>
+            <p><strong>工作原理：</strong>基于5×5矩阵，对字母对进行加密，规则为：</p>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li><strong>同行：</strong>向右循环移动一位</li>
+                <li><strong>同列：</strong>向下循环移动一位</li>
+                <li><strong>矩形：</strong>交换列坐标</li>
+            </ul>
+            <p><strong>使用步骤：</strong></p>
+            <ol class="step-list">
+                <li>输入要加密的明文（只支持英文字母）</li>
+                <li>输入密钥（用于生成矩阵）</li>
+                <li>点击"加密"</li>
+                <li>解密时输入密文和相同密钥后点击"解密"</li>
+            </ol>
+        </div>
+
+        <!-- 现代密码 -->
+        <div class="help-section">
+            <h3>🛡️ 现代密码算法使用指南</h3>
+
+            <h4>MD5哈希算法</h4>
+            <p><strong>工作原理：</strong>将任意长度的输入生成128位（32字符十六进制）的哈希值</p>
+            <p><strong>特点：</strong></p>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li>不可逆，无法从哈希值恢复原文</li>
+                <li>相同输入产生相同哈希值</li>
+                <li>用于密码存储、数据完整性校验</li>
+            </ul>
+            <p><strong>使用步骤：</strong></p>
+            <ol class="step-list">
+                <li>输入要哈希的文本</li>
+                <li>点击"计算MD5"</li>
+                <li>复制结果用于密码存储或校验</li>
+            </ol>
+            <div class="warning-box">
+                <strong>⚠️ 安全提示：</strong>MD5已不安全，生产环境应使用bcrypt或argon2
+            </div>
+
+            <h4>DES对称加密</h4>
+            <p><strong>工作原理：</strong>使用56位有效密钥的对称加密，两个密钥都相同</p>
+            <p><strong>使用步骤：</strong></p>
+            <ol class="step-list">
+                <li>输入要加密的明文</li>
+                <li>设置密钥（系统自动填充或截断到8字节）</li>
+                <li>点击"加密"生成密文</li>
+                <li>解密时输入密文和相同密钥后点击"解密"</li>
+            </ol>
+            <div class="tip-box">
+                <strong>💡 密钥说明：</strong>密钥会自动处理：少于8字符会用空字符填充，多于8字符会截断
+            </div>
+
+            <h4>AES对称加密</h4>
+            <p><strong>工作原理：</strong>现代标准对称加密，支持128/192/256位密钥</p>
+            <p><strong>使用步骤：</strong></p>
+            <ol class="step-list">
+                <li>输入要加密的明文</li>
+                <li>输入密钥</li>
+                <li>选择密钥大小（推荐256位获得最高安全性）</li>
+                <li>点击"加密"生成密文</li>
+                <li>解密时选择相同的密钥大小后点击"解密"</li>
+            </ol>
+            <div class="tip-box">
+                <strong>💡 密钥大小说明：</strong>
+                <ul style="margin: 5px 0;">
+                    <li>128位（16字节）：基础安全</li>
+                    <li>192位（24字节）：更高安全性</li>
+                    <li>256位（32字节）：最高安全性 ⭐ 推荐</li>
+                </ul>
+            </div>
+
+            <h4>RSA非对称加密</h4>
+            <p><strong>工作原理：</strong>使用公钥加密，私钥解密，基于大数分解困难性</p>
+            <p><strong>使用步骤：</strong></p>
+            <ol class="step-list">
+                <li>选择密钥大小（1024或2048位，推荐2048）</li>
+                <li>点击"生成密钥对"生成公钥和私钥</li>
+                <li><strong>加密：</strong>输入明文，粘贴公钥，点击"加密"</li>
+                <li><strong>解密：</strong>输入密文，粘贴私钥，点击"解密"</li>
+            </ol>
+            <div class="warning-box">
+                <strong>⚠️ 重要提示：</strong>妥善保管私钥，不要泄露给任何人！
+            </div>
+
+            <h4>算法对比</h4>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>算法</th>
+                        <th>类型</th>
+                        <th>密钥大小</th>
+                        <th>速度</th>
+                        <th>安全性</th>
+                        <th>应用</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>MD5</td>
+                        <td>哈希</td>
+                        <td>无</td>
+                        <td>快</td>
+                        <td>已破解</td>
+                        <td>校验、教学</td>
+                    </tr>
+                    <tr>
+                        <td>DES</td>
+                        <td>对称</td>
+                        <td>56比特</td>
+                        <td>快</td>
+                        <td>已过时</td>
+                        <td>历史数据</td>
+                    </tr>
+                    <tr>
+                        <td>AES</td>
+                        <td>对称</td>
+                        <td>128/192/256</td>
+                        <td>快</td>
+                        <td>很强</td>
+                        <td>数据加密</td>
+                    </tr>
+                    <tr>
+                        <td>RSA</td>
+                        <td>非对称</td>
+                        <td>1024/2048+</td>
+                        <td>较慢</td>
+                        <td>很强</td>
+                        <td>密钥交换、签名</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 图像分存 -->
+        <div class="help-section">
+            <h3>🖼️ 图像信息分存使用指南</h3>
+            
+            <h4>什么是Shamir秘密分享？</h4>
+            <p>Shamir秘密分享方案是一种密码学技术，可以将一个秘密分成n个分片，其中任意k个分片都可以恢复原秘密，而k-1个分片无法恢复。</p>
+
+            <p><strong>核心概念：</strong></p>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li><strong>阈值(k)：</strong>恢复原图所需的最少分片数</li>
+                <li><strong>总数(n)：</strong>生成的分片总数</li>
+                <li><strong>关系：</strong>k ≤ n，只有 k 个或更多分片才能恢复</li>
+            </ul>
+
+            <h4>分割图像步骤</h4>
+            <ol class="step-list">
+                <li>点击"分割图像"标签页</li>
+                <li>点击"选择图像"上传一张图片</li>
+                <li>设置阈值k（通常为3-5）</li>
+                <li>设置总分片数n（通常为5-10）</li>
+                <li>点击"分割图像"按钮</li>
+                <li>系统会生成n个分片文件供下载</li>
+            </ol>
+
+            <h4>恢复图像步骤</h4>
+            <ol class="step-list">
+                <li>点击"恢复图像"标签页</li>
+                <li>选择至少k个分片文件（.bin格式）</li>
+                <li>输入阈值k（必须与分割时相同）</li>
+                <li>输入原始图像的宽度和高度</li>
+                <li>选择图像格式（RGB或RGBA）</li>
+                <li>点击"恢复图像"按钮</li>
+            </ol>
+
+            <h4>配置建议</h4>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>场景</th>
+                        <th>推荐配置</th>
+                        <th>说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>高度安全</td>
+                        <td>k=4, n=7</td>
+                        <td>7个分片中任意4个可恢复，高容错能力</td>
+                    </tr>
+                    <tr>
+                        <td>平衡配置</td>
+                        <td>k=3, n=5</td>
+                        <td>常用配置，易于管理和恢复</td>
+                    </tr>
+                    <tr>
+                        <td>容易恢复</td>
+                        <td>k=2, n=4</td>
+                        <td>容易恢复，但安全性降低</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="tip-box">
+                <strong>💡 使用技巧：</strong>
+                <ul>
+                    <li>分片应存放在不同的位置或设备上</li>
+                    <li>记录分片的来源和编号</li>
+                    <li>定期测试恢复功能，确保分片有效</li>
+                    <li>保管好分片文件，不要丢失</li>
+                </ul>
+            </div>
+
+            <div class="warning-box">
+                <strong>⚠️ 重要注意：</strong>
+                <ul>
+                    <li>分片数不能少于k，否则无法恢复</li>
+                    <li>所有分片必须来自同一次分割</li>
+                    <li>分片文件损坏会导致恢复失败</li>
+                    <li>图像尺寸必须准确输入</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 常见问题 -->
+        <div class="help-section">
+            <h3>❓ 常见问题解答</h3>
+
+            <h4>Q: 忘记密码怎么办？</h4>
+            <p>A: 当前版本没有密码重置功能。为了安全起见，建议妥善保管账户凭证。生产环境应实现密码恢复机制。</p>
+
+            <h4>Q: 生成的密文能被破译吗？</h4>
+            <p>A: 
+                <ul style="margin: 10px 0 10px 20px;">
+                    <li><strong>凯撒密码：</strong>非常容易破译（只有26种可能）</li>
+                    <li><strong>单表置换：</strong>可被频率分析破译</li>
+                    <li><strong>Playfair：</strong>比较难以破译，但仍不够安全</li>
+                    <li><strong>AES：</strong>几乎不可能破译</li>
+                    <li><strong>RSA：</strong>密钥足够长时极为安全</li>
+                </ul>
+            </p>
+
+            <h4>Q: 支持哪些图像格式？</h4>
+            <p>A: 支持OpenCV和PIL支持的所有格式，包括：JPG、PNG、BMP、TIFF等常见格式。</p>
+
+            <h4>Q: 能处理多大的文件？</h4>
+            <p>A: 系统的上传大小限制为16MB（在config.py中可配置）。大文件建议先压缩后再上传。</p>
+
+            <h4>Q: 加密后的文本为什么这么长？</h4>
+            <p>A: 系统为了安全性在密文中包含了初始化向量(IV)，并进行了Base64编码，所以密文会比原文长。</p>
+
+            <h4>Q: 为什么解密失败？</h4>
+            <p>A: 可能的原因：
+                <ul style="margin: 10px 0 10px 20px;">
+                    <li>密钥输入错误</li>
+                    <li>密文被修改</li>
+                    <li>使用了错误的算法</li>
+                    <li>密钥大小设置不对（AES）</li>
+                </ul>
+            </p>
+        </div>
+
+        <!-- 安全建议 -->
+        <div class="help-section">
+            <h3>🔒 安全使用建议</h3>
+
+            <div class="warning-box">
+                <strong>⚠️ 本项目仅供教学和演示用途，不适合生产环境！</strong>
+            </div>
+
+            <h4>密码安全</h4>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li>使用强密码（至少8个字符，包含大小写字母和数字）</li>
+                <li>不要在多个网站使用相同密码</li>
+                <li>定期更改密码</li>
+                <li>不要分享你的密码给任何人</li>
+            </ul>
+
+            <h4>密钥管理</h4>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li>妥善保管所有密钥文件</li>
+                <li>备份重要的私钥</li>
+                <li>定期轮换密钥</li>
+                <li>使用密钥管理服务（生产环境）</li>
+            </ul>
+
+            <h4>数据保护</h4>
+            <ul style="margin: 10px 0 10px 20px;">
+                <li>使用HTTPS访问（生产环境）</li>
+                <li>不要在公共网络上处理敏感数据</li>
+                <li>清除浏览器历史和缓存</li>
+                <li>使用防病毒软件保护设备</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 2px solid #ecf0f1;">
+            <p style="color: #7f8c8d;">需要更多帮助？请参考项目文档或联系管理员。</p>
+            <a href="{{ url_for('index') }}" class="btn btn-primary">返回首页</a>
+        </div>
+    </div>
+</body>
+</html>

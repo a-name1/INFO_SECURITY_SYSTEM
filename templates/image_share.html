@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图像信息分存 - 信息安全技术系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="brand">信息安全技术系统</div>
+            <div class="nav-right">
+                <a href="{{ url_for('index') }}">首页</a>
+                <a href="{{ url_for('help_page') }}">📚 帮助</a>
+                <button id="logout-btn">登出</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>图像信息分存</h1>
+        <p>使用Shamir秘密分享方案实现图像的安全分存与恢复</p>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="split">分割图像</button>
+            <button class="tab-btn" data-tab="recover">恢复图像</button>
+        </div>
+
+        <!-- 分割图像 -->
+        <div id="split" class="tab-content active">
+            <h2>分割图像为多个分片</h2>
+            <div class="info-box">
+                <h4>📖 Shamir秘密分享方案</h4>
+                <p><strong>原理：</strong>将一个秘密分成n个分片，其中任意k个分片都可以恢复原秘密</p>
+                <p><strong>参数说明：</strong>
+                    <ul style="margin: 5px 0 5px 20px;">
+                        <li><strong>k（阈值）：</strong>恢复原图所需的最少分片数</li>
+                        <li><strong>n（总数）：</strong>生成的分片总数</li>
+                        <li><strong>关系：</strong>k ≤ n，只有任意k个分片可恢复</li>
+                    </ul>
+                </p>
+                <p><strong>安全性：</strong>
+                    <ul style="margin: 5px 0 5px 20px;">
+                        <li>拥有k-1个分片无法恢复原图</li>
+                        <li>分片越多，容错能力越强</li>
+                        <li>k值越小，恢复越容易</li>
+                    </ul>
+                </p>
+                <p><strong>应用：</strong>重要数据备份、密钥分布式存储、文件保护</p>
+                <p><strong>典型配置：</strong>k=3, n=5（5个分片中任意3个可恢复）</p>
+            </div>
+            <div class="form-group">
+                <label for="image-file">选择图像</label>
+                <input type="file" id="image-file" accept="image/*">
+                <p style="font-size: 12px; color: #666; margin: 5px 0;">📊 输入限制：最大 10MB | 支持格式：JPG, PNG, BMP, GIF 等</p>
+            </div>
+            <div class="form-group">
+                <label for="threshold">恢复所需分片数 (k)</label>
+                <input type="number" id="threshold" value="3" min="2" max="10">
+                <p style="font-size: 12px; color: #666; margin: 5px 0;">💡 提示：k值越小越容易恢复，但安全性降低；通常k=3, n=5配置最优</p>
+            </div>
+            <div class="form-group">
+                <label for="shares">总分片数 (n)</label>
+                <input type="number" id="shares" value="5" min="3" max="10">
+                <p style="font-size: 12px; color: #666; margin: 5px 0;">📝 操作步骤：1.选择图像 → 2.设置k和n → 3.点击"分割图像" → 4.保存所有分片文件</p>
+            </div>
+            <button class="btn btn-primary" onclick="splitImage()">分割图像</button>
+            <div id="split-result" class="result"></div>
+        </div>
+
+        <!-- 恢复图像 -->
+        <div id="recover" class="tab-content">
+            <h2>从分片恢复图像</h2>
+            <div class="info-box">
+                <h4>📖 图像恢复流程（自动检测参数）</h4>
+                <p><strong>前置条件：</strong>拥有至少k个有效的分片文件和metadata.json</p>
+                <p><strong>✨ 新功能：</strong>系统会自动从metadata.json读取图像参数，无需手动输入！</p>
+                <p><strong>恢复步骤：</strong>
+                    <ol style="margin: 5px 0 5px 20px;">
+                        <li>选择至少k个分片文件（share_*.bin）和metadata.json</li>
+                        <li>点击"恢复图像"按钮 - 系统自动检测所有参数</li>
+                        <li>等待恢复完成并下载结果</li>
+                    </ol>
+                </p>
+                <p><strong>注意事项：</strong>
+                    <ul style="margin: 5px 0 5px 20px;">
+                        <li>✅ 无需输入阈值k（自动从metadata.json读取）</li>
+                        <li>✅ 无需输入图像尺寸（自动从metadata.json读取）</li>
+                        <li>✅ 无需指定图像格式（自动从metadata.json读取）</li>
+                        <li>⚠️  必须包含metadata.json文件</li>
+                        <li>⚠️  所有分片必须来自同一次分割</li>
+                        <li>⚠️  分片文件不能损坏</li>
+                    </ul>
+                </p>
+                <p><strong>恢复原理：</strong>使用Lagrange插值法从分片重构原始数据</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="share-files">选择分片文件</label>
+                <input type="file" id="share-files" multiple accept=".bin,.json">
+                <p style="font-size: 12px; color: #666; margin: 5px 0;">💡 提示：选择分片文件（share_*.bin）和metadata.json，系统会自动检测参数</p>
+            </div>
+            
+            <div id="metadata-info" style="display: none; background: #e8f4f8; padding: 10px; margin: 10px 0; border-radius: 4px;">
+                <p><strong>📄 检测到的元数据：</strong></p>
+                <p id="metadata-details" style="margin: 5px 0;"></p>
+            </div>
+            
+            <button class="btn btn-primary" onclick="recoverImage()">恢复图像</button>
+            <div id="recover-result" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        // 标签页切换
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById(tabName).classList.add('active');
+                this.classList.add('active');
+            });
+        });
+
+        // 登出
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            fetch('/auth/logout', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = '/';
+                    }
+                });
+        });
+
+        // 分割图像
+        function splitImage() {
+            const imageFile = document.getElementById('image-file').files[0];
+            const threshold = document.getElementById('threshold').value;
+            const shares = document.getElementById('shares').value;
+            
+            if (!imageFile) {
+                alert('请选择一个图像文件');
+                return;
+            }
+            
+            if (parseInt(threshold) > parseInt(shares)) {
+                alert('恢复所需分片数不能大于总分片数');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('image', imageFile);
+            formData.append('threshold', threshold);
+            formData.append('shares', shares);
+            
+            document.getElementById('split-result').innerHTML = '<p style="color: blue;">⏳ 正在处理图像...</p>';
+            
+            fetch('/api/image/split', {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    let sharesHtml = '<h3>✅ 分割成功！</h3>';
+                    sharesHtml += `<p><strong>消息：</strong>${data.message}</p>`;
+                    sharesHtml += `<div style="background: #f0f8ff; padding: 10px; border-radius: 4px; margin: 10px 0;">`;
+                    sharesHtml += `<p><strong>📊 分割信息：</strong></p>`;
+                    sharesHtml += `<ul style="margin: 5px 0 5px 20px;">`;
+                    sharesHtml += `<li>时间戳: ${data.timestamp}</li>`;
+                    sharesHtml += `<li>总分片数: ${data.total_shares}</li>`;
+                    sharesHtml += `<li>恢复阈值: ${data.threshold}</li>`;
+                    sharesHtml += `<li>图像模式: ${data.image_mode}</li>`;
+                    sharesHtml += `<li>图像尺寸: ${data.image_size[0]} × ${data.image_size[1]}</li>`;
+                    sharesHtml += `</ul>`;
+                    sharesHtml += `</div>`;
+                    sharesHtml += `<p><strong>📦 生成的分片：</strong></p>`;
+                    sharesHtml += `<div style="background: #fff9e6; padding: 10px; border-radius: 4px; margin: 10px 0;">`;
+                    sharesHtml += `<ul style="margin: 5px 0 5px 20px;">`;
+                    data.shares.forEach((share, index) => {
+                        sharesHtml += `<li><code>${share}</code></li>`;
+                    });
+                    sharesHtml += `</ul>`;
+                    sharesHtml += `</div>`;
+                    sharesHtml += `<p><strong>💾 重要提示：</strong></p>`;
+                    sharesHtml += `<ul style="margin: 5px 0 5px 20px;">`;
+                    sharesHtml += `<li>✅ 系统已自动生成 <code>metadata.json</code> 文件</li>`;
+                    sharesHtml += `<li>📥 请从服务器下载所有 ${data.total_shares} 个分片文件（本地运行时存储在outputs文件夹下）</li>`;
+                    sharesHtml += `<li>📄 同时下载 <code>metadata.json</code>，恢复时会自动使用</li>`;
+                    sharesHtml += `<li>✨ 恢复时无需手动输入参数！</li>`;
+                    sharesHtml += `<li>🔒 建议将分片存放在不同位置以提高安全性</li>`;
+                    sharesHtml += `</ul>`;
+                    document.getElementById('split-result').innerHTML = sharesHtml;
+                } else {
+                    document.getElementById('split-result').innerHTML = 
+                        `<p style="color: red;">❌ 错误: ${data.message}</p>`;
+                }
+            })
+            .catch(error => {
+                document.getElementById('split-result').innerHTML = 
+                    `<p style="color: red;">❌ 错误: ${error.message}</p>`;
+            });
+        }
+
+        // 恢复图像
+        function recoverImage() {
+            const shareFiles = document.getElementById('share-files').files;
+            
+            if (shareFiles.length === 0) {
+                document.getElementById('recover-result').innerHTML = 
+                    `<p style="color: red;">❌ 错误: 请选择分片文件</p>`;
+                return;
+            }
+            
+            // 检查是否包含metadata.json
+            let hasMetadata = false;
+            for (let i = 0; i < shareFiles.length; i++) {
+                if (shareFiles[i].name === 'metadata.json') {
+                    hasMetadata = true;
+                    break;
+                }
+            }
+            
+            if (!hasMetadata) {
+                document.getElementById('recover-result').innerHTML = 
+                    `<p style="color: orange;">⚠️  警告: 未找到metadata.json，系统会尝试恢复但可能失败</p>`;
+            }
+            
+            const formData = new FormData();
+            for (let i = 0; i < shareFiles.length; i++) {
+                formData.append('share_files', shareFiles[i]);
+            }
+            
+            document.getElementById('recover-result').innerHTML = '<p style="color: blue;">⏳ 正在恢复图像（自动检测参数）...</p>';
+            
+            fetch('/api/image/recover', {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    const recoverResult = document.getElementById('recover-result');
+                    recoverResult.innerHTML = `<h3>✅ 恢复成功！</h3>`;
+                    recoverResult.innerHTML += `<p>系统已从上传的分片自动恢复出原始图像</p>`;
+                    recoverResult.innerHTML += `<p><strong>输出文件：</strong> ${data.output_file}</p>`;
+                    recoverResult.innerHTML += `<p><a href="${data.download_url}" download class="btn btn-success">📥 下载恢复的图像</a></p>`;
+                } else {
+                    document.getElementById('recover-result').innerHTML = `<p style="color: red;">❌ 恢复失败: ${data.message}</p>`;
+                }
+            })
+            .catch(error => {
+                document.getElementById('recover-result').innerHTML = `<p style="color: red;">❌ 错误: ${error.message}</p>`;
+            });
+        }
+    </script>
+</body>
+</html>

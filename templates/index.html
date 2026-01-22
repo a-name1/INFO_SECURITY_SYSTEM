@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>信息安全技术系统 - 首页</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="brand">信息安全技术系统</div>
+            <div class="nav-right">
+                <a href="{{ url_for('help_page') }}">📚 帮助</a>
+                <span id="user-info" style="display: none;">
+                    欢迎, <span id="username"></span>
+                </span>
+                <button id="logout-btn" style="display: none;">登出</button>
+                <div id="guest-links" style="display: none;">
+                    <a href="{{ url_for('login_page') }}">登录</a>
+                    <a href="{{ url_for('register_page') }}">注册</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section class="hero">
+            <h1>信息安全技术课程设计</h1>
+            <p>集成身份认证、经典密码、现代密码和图像分存功能</p>
+        </section>
+
+        <section class="features" id="features">
+            <h2>系统功能</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🔐 身份认证</h3>
+                    <p>用户注册和登录认证，采用MD5密码哈希保护账户安全</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔑 经典密码</h3>
+                    <p><strong>包括：</strong></p>
+                    <ul style="text-align: left; margin: 10px 0;">
+                        <li>凯撒密码 - 简单位移密码</li>
+                        <li>单表置换 - 26字母替换表</li>
+                        <li>Playfair - 5×5矩阵密码</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>🛡️ 现代密码</h3>
+                    <p><strong>包括：</strong></p>
+                    <ul style="text-align: left; margin: 10px 0;">
+                        <li>MD5 - 消息摘要算法</li>
+                        <li>DES - 对称加密标准</li>
+                        <li>AES - 高级加密标准</li>
+                        <li>RSA - 非对称加密算法</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>🖼️ 图像分存</h3>
+                    <p>使用Shamir秘密分享方案将图像分割成多个分片，任意k个分片可恢复原图</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="algorithms-detail">
+            <h2>📚 算法速览</h2>
+            <div class="algorithm-table">
+                <div class="algo-row algo-header">
+                    <div class="algo-col algo-type">类型</div>
+                    <div class="algo-col algo-name">算法名称</div>
+                    <div class="algo-col algo-desc">说明</div>
+                    <div class="algo-col algo-security">安全性</div>
+                </div>
+                
+                <div class="algo-row algo-classic">
+                    <div class="algo-col algo-type"><strong>经典</strong></div>
+                    <div class="algo-col algo-name">凯撒密码</div>
+                    <div class="algo-col algo-desc">字母位移加密，只有26种可能</div>
+                    <div class="algo-col algo-security">⭐</div>
+                </div>
+                <div class="algo-row algo-classic">
+                    <div class="algo-col algo-type"></div>
+                    <div class="algo-col algo-name">单表置换</div>
+                    <div class="algo-col algo-desc">26字母替换表，密钥空间大</div>
+                    <div class="algo-col algo-security">⭐⭐</div>
+                </div>
+                <div class="algo-row algo-classic">
+                    <div class="algo-col algo-type"></div>
+                    <div class="algo-col algo-name">Playfair</div>
+                    <div class="algo-col algo-desc">5×5矩阵，双字母加密</div>
+                    <div class="algo-col algo-security">⭐⭐⭐</div>
+                </div>
+
+                <div class="algo-row algo-modern">
+                    <div class="algo-col algo-type"><strong>现代</strong></div>
+                    <div class="algo-col algo-name">MD5</div>
+                    <div class="algo-col algo-desc">消息摘要，32位哈希值</div>
+                    <div class="algo-col algo-security">⚠️ 已破解</div>
+                </div>
+                <div class="algo-row algo-modern">
+                    <div class="algo-col algo-type"></div>
+                    <div class="algo-col algo-name">DES</div>
+                    <div class="algo-col algo-desc">56位有效密钥，已过时</div>
+                    <div class="algo-col algo-security">⭐⭐</div>
+                </div>
+                <div class="algo-row algo-modern">
+                    <div class="algo-col algo-type"></div>
+                    <div class="algo-col algo-name">AES</div>
+                    <div class="algo-col algo-desc">128/192/256位密钥，现代标准</div>
+                    <div class="algo-col algo-security">⭐⭐⭐⭐⭐</div>
+                </div>
+                <div class="algo-row algo-modern">
+                    <div class="algo-col algo-type"></div>
+                    <div class="algo-col algo-name">RSA</div>
+                    <div class="algo-col algo-desc">1024/2048位，非对称加密</div>
+                    <div class="algo-col algo-security">⭐⭐⭐⭐⭐</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="quick-access" id="quick-access" style="display: none;">
+            <h2>快速访问</h2>
+            <div class="button-group">
+                <a href="{{ url_for('classic_page') }}" class="btn btn-primary">经典密码</a>
+                <a href="{{ url_for('modern_page') }}" class="btn btn-primary">现代密码</a>
+                <a href="{{ url_for('image_share_page') }}" class="btn btn-primary">图像分存</a>
+            </div>
+        </section>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // 检查登录状态
+        fetch('/auth/check')
+            .then(response => response.json())
+            .then(data => {
+                if (data.logged_in) {
+                    document.getElementById('user-info').style.display = 'block';
+                    document.getElementById('username').textContent = data.username;
+                    document.getElementById('logout-btn').style.display = 'block';
+                    document.getElementById('quick-access').style.display = 'block';
+                } else {
+                    document.getElementById('guest-links').style.display = 'block';
+                }
+            });
+
+        // 登出处理
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            fetch('/auth/logout', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = '/';
+                    }
+                });
+        });
+    </script>
+</body>
+</html>

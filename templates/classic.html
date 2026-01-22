@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>经典密码算法 - 信息安全技术系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="brand">信息安全技术系统</div>
+            <div class="nav-right">
+                <a href="{{ url_for('index') }}">首页</a>
+                <a href="{{ url_for('help_page') }}">📚 帮助</a>
+                <button id="logout-btn">登出</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>经典密码算法</h1>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="caesar">凯撒密码</button>
+            <button class="tab-btn" data-tab="substitution">单表置换</button>
+            <button class="tab-btn" data-tab="playfair">Playfair</button>
+        </div>
+
+        <!-- 凯撒密码 -->
+        <div id="caesar" class="tab-content active">
+            <h2>凯撒密码</h2>
+            <div class="info-box">
+                <h4>📖 算法介绍</h4>
+                <p><strong>原理：</strong>将明文中的每个字母按照字母表顺序向后移动固定数量的位置</p>
+                <p><strong>加密：</strong> A + 位移数 = 密文字母</p>
+                <p><strong>解密：</strong> 密文 - 位移数 = 明文字母</p>
+                <p><strong>特点：</strong>简单易懂，但安全性低，只有26种可能</p>
+                <p><strong>应用：</strong>教学演示、简单数据混淆</p>
+            </div>
+            <div class="form-group">
+                <label for="caesar-text">文本</label>
+                <textarea id="caesar-text" placeholder="输入要加密/解密的文本" rows="4"></textarea>
+                <p style="font-size: 12px; color: #666; margin: 5px 0;">📊 输入限制：最多 10000 字符</p>
+            </div>
+            <div class="form-group">
+                <label for="caesar-shift">位移量</label>
+                <input type="number" id="caesar-shift" value="3" min="1" max="25">
+                <p style="font-size: 12px; color: #666; margin: 5px 0;">💡 提示：位移量范围1-25，加密和解密使用相反的位移 (加3 = 解-3)</p>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="caesarEncrypt()">加密</button>
+                <button class="btn btn-primary" onclick="caesarDecrypt()">解密</button>
+            </div>
+            <div id="caesar-result" class="result"></div>
+        </div>
+
+        <!-- 单表置换 -->
+        <div id="substitution" class="tab-content">
+            <h2>单表置换密码</h2>
+            <div class="info-box">
+                <h4>📖 算法介绍</h4>
+                <p><strong>原理：</strong>使用一个26字母的替换表，每个字母对应替换表中的一个字母</p>
+                <p><strong>加密：</strong>按照替换表替换每个字母（保持大小写）</p>
+                <p><strong>解密：</strong>使用逆向替换表恢复原文</p>
+                <p><strong>特点：</strong>密钥空间大（26!种可能），比凯撒密码安全</p>
+                <p><strong>使用：</strong>输入文本，自动生成或输入密钥，点击加/解密</p>
+                <p><strong>提示：</strong>密钥必须包含26个不同的字母</p>
+            </div>
+            <div class="form-group">
+                <label for="substitution-text">文本</label>
+                <textarea id="substitution-text" placeholder="输入要加密/解密的文本"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="substitution-key">替换表（26个字母）</label>
+                <textarea id="substitution-key" placeholder="输入替换表，或点击按钮自动生成" rows="3"></textarea>
+                <p style="font-size: 12px; color: #666; margin: 5px 0;">💡 提示：密钥必须包含26个不同的字母A-Z（不分大小写）| 📊 输入限制：最多 10000 字符</p>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="substitutionEncrypt()">加密</button>
+                <button class="btn btn-primary" onclick="substitutionDecrypt()">解密</button>
+                <button class="btn btn-secondary" onclick="generateSubstitutionKey()">🔑 生成密钥</button>
+            </div>
+            <div id="substitution-result" class="result"></div>
+        </div>
+
+        <!-- Playfair -->
+        <div id="playfair" class="tab-content">
+            <h2>Playfair密码</h2>
+            <div class="info-box">
+                <h4>📖 算法介绍</h4>
+                <p><strong>原理：</strong>基于5×5的字母矩阵，对两个字母的对进行加密</p>
+                <p><strong>矩阵构建：</strong>根据密钥构建5×5矩阵（I和J共用一个位置）</p>
+                <p><strong>加密规则：</strong></p>
+                <ul style="margin: 5px 0 5px 20px;">
+                    <li>同行：向右循环移动</li>
+                    <li>同列：向下循环移动</li>
+                    <li>矩形：交换列坐标</li>
+                </ul>
+                <p><strong>特点：</strong>比替换密码更复杂，破译难度更高</p>
+                <p><strong>使用：</strong>输入文本和密钥，系统自动处理字母对齐和加密</p>
+            </div>
+            <div class="form-group">
+                <label for="playfair-text">文本</label>
+                <textarea id="playfair-text" placeholder="输入要加密/解密的文本"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="playfair-key">密钥（用于构建5×5矩阵）</label>
+                <input type="text" id="playfair-key" placeholder="输入或生成密钥">
+                <p style="font-size: 12px; color: #666; margin: 5px 0;">💡 提示：密钥可以是任意字符串，系统自动处理I/J合并和矩阵构建 | 📊 输入限制：最多 100 字符</p>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="playfairEncrypt()">加密</button>
+                <button class="btn btn-primary" onclick="playfairDecrypt()">解密</button>
+                <button class="btn btn-secondary" onclick="generatePlayfairKey()">🔑 生成密钥</button>
+            </div>
+            <div id="playfair-result" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        // 标签页切换
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById(tabName).classList.add('active');
+                this.classList.add('active');
+            });
+        });
+
+        // 登出
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            fetch('/auth/logout', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = '/';
+                    }
+                });
+        });
+
+        // 凯撒密码
+        async function caesarEncrypt() {
+            const text = document.getElementById('caesar-text').value;
+            const shift = document.getElementById('caesar-shift').value;
+            
+            if (!text) {
+                alert('请输入文本');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/classic/caesar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text, shift, operation: 'encrypt' })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('caesar-result').innerHTML = 
+                        `<h3>加密结果</h3><p>${data.result}</p>`;
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                alert('加密失败: ' + error.message);
+            }
+        }
+
+        function caesarDecrypt() {
+            const text = document.getElementById('caesar-text').value;
+            const shift = document.getElementById('caesar-shift').value;
+            
+            if (!text) {
+                alert('请输入文本');
+                return;
+            }
+            
+            fetch('/api/classic/caesar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, shift, operation: 'decrypt' })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('caesar-result').innerHTML = 
+                        `<h3>解密结果</h3><p>${data.result}</p>`;
+                } else {
+                    alert(data.message);
+                }
+            });
+        }
+
+        // 单表置换
+        async function substitutionEncrypt() {
+            const text = document.getElementById('substitution-text').value;
+            const key = document.getElementById('substitution-key').value;
+            
+            if (!text) {
+                alert('请输入文本');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/classic/substitution', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text, key: key || null, operation: 'encrypt' })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('substitution-key').value = data.key;
+                    document.getElementById('substitution-result').innerHTML = 
+                        `<h3>加密结果</h3><p>${data.result}</p>`;
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                alert('加密失败: ' + error.message);
+            }
+        }
+
+        function substitutionDecrypt() {
+            const text = document.getElementById('substitution-text').value;
+            const key = document.getElementById('substitution-key').value;
+            
+            if (!text || !key) {
+                alert('请输入文本和密钥');
+                return;
+            }
+            
+            fetch('/api/classic/substitution', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, key, operation: 'decrypt' })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('substitution-result').innerHTML = 
+                        `<h3>解密结果</h3><p>${data.result}</p>`;
+                } else {
+                    alert(data.message);
+                }
+            });
+        }
+
+        function generateSubstitutionKey() {
+            const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+            const arr = alphabet.split('');
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            document.getElementById('substitution-key').value = arr.join('');
+            alert('✅ 单表置换密钥已生成！');
+        }
+
+        // Playfair密钥生成
+        function generatePlayfairKey() {
+            const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+            let key = '';
+            for (let i = 0; i < 8; i++) {
+                key += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('playfair-key').value = key;
+            alert('✅ Playfair密钥已生成！');
+        }
+
+        // Playfair
+        async function playfairEncrypt() {
+            const text = document.getElementById('playfair-text').value;
+            const key = document.getElementById('playfair-key').value;
+            
+            if (!text || !key) {
+                alert('请输入文本和密钥');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/classic/playfair', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text, key, operation: 'encrypt' })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('playfair-result').innerHTML = 
+                        `<h3>加密结果</h3><p>${data.result}</p>`;
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                alert('加密失败: ' + error.message);
+            }
+        }
+
+        function playfairDecrypt() {
+            const text = document.getElementById('playfair-text').value;
+            const key = document.getElementById('playfair-key').value;
+            
+            if (!text || !key) {
+                alert('请输入文本和密钥');
+                return;
+            }
+            
+            fetch('/api/classic/playfair', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, key, operation: 'decrypt' })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('playfair-result').innerHTML = 
+                        `<h3>解密结果</h3><p>${data.result}</p>`;
+                } else {
+                    alert(data.message);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

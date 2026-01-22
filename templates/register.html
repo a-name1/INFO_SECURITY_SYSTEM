@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 - 信息安全技术系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="brand">信息安全技术系统</div>
+            <div class="nav-right">
+                <a href="{{ url_for('index') }}">首页</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="auth-form">
+            <h1>用户注册</h1>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" required minlength="3">
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">确认密码</label>
+                    <input type="password" id="confirm-password" name="confirm-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">邮箱（可选）</label>
+                    <input type="email" id="email" name="email">
+                </div>
+                <button type="submit" class="btn btn-primary">注册</button>
+                <div id="message" style="margin-top: 10px;"></div>
+            </form>
+            <p style="margin-top: 20px;">
+                已有账户? <a href="{{ url_for('login_page') }}">立即登录</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('register-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const email = document.getElementById('email').value;
+            const messageDiv = document.getElementById('message');
+            
+            if (password !== confirmPassword) {
+                messageDiv.style.color = 'red';
+                messageDiv.textContent = '两次输入的密码不一致';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password,
+                        email: email
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    messageDiv.style.color = 'green';
+                    messageDiv.textContent = '注册成功，请登录';
+                    setTimeout(() => {
+                        window.location.href = '{{ url_for("login_page") }}';
+                    }, 1500);
+                } else {
+                    messageDiv.style.color = 'red';
+                    messageDiv.textContent = data.message;
+                }
+            } catch (error) {
+                messageDiv.style.color = 'red';
+                messageDiv.textContent = '注册失败: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>

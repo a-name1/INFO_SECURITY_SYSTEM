@@ -56,6 +56,8 @@ database/*.db-journal
 
 # 测试/调试文件
 test_*.py            # 本地测试脚本
+test_output/         # 测试脚本生成的输出
+test_suite_output/   # 测试套件生成的输出
 debug.log
 *.pem.bak            # 证书备份文件
 

@@ -1,0 +1,1 @@
+# Crypto Classic module

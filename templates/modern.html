@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>现代密码算法 - 信息安全技术系统</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="brand">信息安全技术系统</div>
+            <div class="nav-right">
+                <a href="{{ url_for('index') }}">首页</a>
+                <a href="{{ url_for('help_page') }}">📚 帮助</a>
+                <button id="logout-btn">登出</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>现代密码算法</h1>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="md5">MD5</button>
+            <button class="tab-btn" data-tab="des">DES</button>
+            <button class="tab-btn" data-tab="aes">AES</button>
+            <button class="tab-btn" data-tab="rsa">RSA</button>
+        </div>
+
+        <!-- MD5哈希 -->
+        <div id="md5" class="tab-content active">
+            <h2>MD5消息摘要算法</h2>
+            <div class="info-box">
+                <h4>📖 算法介绍</h4>
+                <p><strong>原理：</strong>将任意长度的输入通过哈希函数生成固定长度的128位摘要</p>
+                <p><strong>输出：</strong>32位十六进制字符串</p>
+                <p><strong>特点：</strong>
+                    <ul style="margin: 5px 0 5px 20px;">
+                        <li>单向加密，无法反解</li>
+                        <li>相同输入产生相同输出</li>
+                        <li>不同输入几乎不会产生相同输出</li>
+                    </ul>
+                </p>
+                <p><strong>应用：</strong>密码存储、数据完整性校验、文件指纹识别</p>
+                <p><strong>安全提示：</strong>MD5已不安全，容易被碰撞攻击，仅供教学用途</p>
+            </div>
+            <div class="form-group">
+                <label for="md5-text">文本</label>
+                <textarea id="md5-text" placeholder="输入要哈希的文本"></textarea>
+                <p style="font-size: 12px; color: #666; margin: 5px 0;">📊 输入限制：最多 100000 字符 | ⚠️ 警告：MD5仅供学习用，生产环境建议使用SHA256</p>
+            </div>
+            <button class="btn btn-primary" onclick="computeMD5()">计算MD5</button>
+            <div id="md5-result" class="result"></div>
+        </div>
+
+        <!-- DES加密 -->
+        <div id="des" class="tab-content">
+            <h2>DES对称加密</h2>
+            <div class="info-box">
+                <h4>📖 算法介绍</h4>
+                <p><strong>原理：</strong>数据加密标准，使用56位有效密钥的对称加密算法</p>
+                <p><strong>密钥：</strong>8字节（64位，其中8位用于奇偶校验）</p>
+                <p><strong>工作模式：</strong>CBC模式，使用随机IV保证安全性</p>
+                <p><strong>特点：</strong>
+                    <ul style="margin: 5px 0 5px 20px;">
+                        <li>加密和解密使用相同密钥</li>
+                        <li>速度快，适合大数据加密</li>
+                        <li>密钥较短，现已不够安全</li>
+                    </ul>
+                </p>
+                <p><strong>历史地位：</strong>曾是美国官方加密标准，已被AES取代</p>
+                <p><strong>使用：</strong>输入密钥至少8个字符，系统自动填充或截断</p>
+            </div>
+            <div class="form-group">
+                <label for="des-text">文本</label>
+                <textarea id="des-text" placeholder="输入要加密/解密的文本"></textarea>
+                <p style="font-size: 12px; color: #666; margin: 5px 0;">📊 输入限制：最多 10000 字符</p>
+            </div>
+            <div class="form-group">
+                <label for="des-key">密钥（8字节）</label>
+                <input type="text" id="des-key" placeholder="输入或生成密钥">
+                <p style="font-size: 12px; color: #666; margin: 5px 0;">💡 提示：密钥至少需要8个字符，系统自动填充或截断 | 📝 使用方法：输入密钥→点击加密→获得密文→使用相同密钥解密</p>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="desEncrypt()">加密</button>
+                <button class="btn btn-primary" onclick="desDecrypt()">解密</button>
+                <button class="btn btn-secondary" onclick="generateDESKey()">🔑 生成密钥</button>
+            </div>
+            <div id="des-result" class="result"></div>
+        </div>
+
+        <!-- AES加密 -->
+        <div id="aes" class="tab-content">
+            <h2>AES对称加密</h2>
+            <div class="info-box">
+                <h4>📖 算法介绍</h4>
+                <p><strong>原理：</strong>高级加密标准，现代主流对称加密算法</p>
+                <p><strong>密钥大小：</strong>支持128、192、256位三种规格</p>
+                <p><strong>工作模式：</strong>CBC模式，安全性和兼容性最好</p>
+                <p><strong>特点：</strong>
+                    <ul style="margin: 5px 0 5px 20px;">
+                        <li>安全性强，抗破译能力强</li>
+                        <li>速度快，性能优良</li>
+                        <li>256位密钥可抵抗量子计算</li>
+                        <li>现为美国官方和国际标准</li>
+                    </ul>
+                </p>
+                <p><strong>应用：</strong>文件加密、通信安全、数据保护等</p>
+                <p><strong>使用建议：</strong>推荐使用256位密钥获得最高安全性</p>
+            </div>
+            <div class="form-group">
+                <label for="aes-text">文本</label>
+                <textarea id="aes-text" placeholder="输入要加密/解密的文本"></textarea>
+                <p style="font-size: 12px; color: #666; margin: 5px 0;">📊 输入限制：最多 100000 字符 | 💡 安全性提示：256位密钥最安全</p>
+            </div>
+            <div class="form-group">
+                <label for="aes-key">密钥</label>
+                <input type="text" id="aes-key" placeholder="输入或生成密钥">
+                <p style="font-size: 12px; color: #666; margin: 5px 0;">💡 提示：密钥长度应与选定的密钥大小匹配（16/24/32字节） | 📝 使用流程：选择密钥大小→生成或输入密钥→加密→使用相同密钥解密</p>
+            </div>
+            <div class="form-group">
+                <label for="aes-key-size">密钥大小</label>
+                <select id="aes-key-size">
+                    <option value="16">128位 (16字节)</option>
+                    <option value="24">192位 (24字节)</option>
+                    <option value="32" selected>256位 (32字节)</option>
+                </select>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="aesEncrypt()">加密</button>
+                <button class="btn btn-primary" onclick="aesDecrypt()">解密</button>
+                <button class="btn btn-secondary" onclick="generateAESKey()">🔑 生成密钥</button>
+            </div>
+            <div id="aes-result" class="result"></div>
+        </div>
+
+        <!-- RSA非对称加密 -->
+        <div id="rsa" class="tab-content">
+            <h2>RSA非对称加密</h2>
+            <div class="form-group">
+                <label for="rsa-key-size">密钥大小</label>
+                <select id="rsa-key-size">
+                    <option value="1024">1024位</option>
+                    <option value="2048" selected>2048位</option>
+                </select>
+                <button class="btn btn-secondary" onclick="generateRSAKeys()">生成密钥对</button>
+            </div>
+            
+            <div class="form-group">
+                <label for="rsa-public-key">公钥</label>
+                <textarea id="rsa-public-key" placeholder="公钥将显示在这里" readonly></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="rsa-private-key">私钥</label>
+                <textarea id="rsa-private-key" placeholder="私钥将显示在这里" readonly></textarea>
+            </div>
+            
+            <h3>加密</h3>
+            <div class="form-group">
+                <label for="rsa-encrypt-text">要加密的文本</label>
+                <textarea id="rsa-encrypt-text" placeholder="输入要加密的文本"></textarea>
+                <p style="font-size: 12px; color: #666; margin: 5px 0;">📊 输入限制：最多 200 字符 | 💡 提示：使用公钥加密，任何人都可以加密，但只有私钥持有者能解密</p>
+            </div>
+            <button class="btn btn-primary" onclick="rsaEncrypt()">加密</button>
+            <div id="rsa-encrypt-result" class="result"></div>
+            
+            <h3>解密</h3>
+            <h3>解密</h3>
+            <div class="form-group">
+                <label for="rsa-decrypt-text">密文</label>
+                <textarea id="rsa-decrypt-text" placeholder="输入密文"></textarea>
+                <p style="font-size: 12px; color: #666; margin: 5px 0;">📝 使用步骤：1.点击"生成密钥对" → 2.输入文本点击"加密" → 3.粘贴密文点击"解密"</p>
+            </div>
+            <button class="btn btn-primary" onclick="rsaDecrypt()">解密</button>
+            <div id="rsa-decrypt-result" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        // 标签页切换
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById(tabName).classList.add('active');
+                this.classList.add('active');
+            });
+        });
+
+        // 登出
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            fetch('/auth/logout', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = '/';
+                    }
+                });
+        });
+
+        // MD5
+        function computeMD5() {
+            const text = document.getElementById('md5-text').value;
+            
+            if (!text) {
+                alert('请输入文本');
+                return;
+            }
+            
+            fetch('/api/modern/md5', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('md5-result').innerHTML = 
+                        `<h3>MD5哈希值</h3><p style="word-break: break-all;">${data.hash}</p>`;
+                } else {
+                    alert(data.message);
+                }
+            });
+        }
+
+        // DES
+        function desEncrypt() {
+            const text = document.getElementById('des-text').value;
+            const key = document.getElementById('des-key').value;
+            
+            if (!text || !key) {
+                alert('请输入文本和密钥');
+                return;
+            }
+            
+            fetch('/api/modern/des', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, key, operation: 'encrypt' })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('des-result').innerHTML = 
+                        `<h3>加密结果</h3><p style="word-break: break-all;">${data.result}</p>`;
+                } else {
+                    alert(data.message);
+                }
+            });
+        }
+
+        function desDecrypt() {
+            const text = document.getElementById('des-text').value;
+            const key = document.getElementById('des-key').value;
+            
+            if (!text || !key) {
+                alert('请输入文本和密钥');
+                return;
+            }
+            
+            fetch('/api/modern/des', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, key, operation: 'decrypt' })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('des-result').innerHTML = 
+                        `<h3>解密结果</h3><p>${data.result}</p>`;
+                } else {
+                    alert(data.message);
+                }
+            });
+        }
+
+        // AES
+        function aesEncrypt() {
+            const text = document.getElementById('aes-text').value;
+            const key = document.getElementById('aes-key').value;
+            const key_size = parseInt(document.getElementById('aes-key-size').value);
+            
+            if (!text || !key) {
+                alert('请输入文本和密钥');
+                return;
+            }
+            
+            fetch('/api/modern/aes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, key, operation: 'encrypt', key_size })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('aes-result').innerHTML = 
+                        `<h3>加密结果</h3><p style="word-break: break-all;">${data.result}</p>`;
+                } else {
+                    alert(data.message);
+                }
+            });
+        }
+
+        function aesDecrypt() {
+            const text = document.getElementById('aes-text').value;
+            const key = document.getElementById('aes-key').value;
+            const key_size = parseInt(document.getElementById('aes-key-size').value);
+            
+            if (!text || !key) {
+                alert('请输入文本和密钥');
+                return;
+            }
+            
+            fetch('/api/modern/aes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, key, operation: 'decrypt', key_size })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('aes-result').innerHTML = 
+                        `<h3>解密结果</h3><p>${data.result}</p>`;
+                } else {
+                    alert(data.message);
+                }
+            });
+        }
+
+        // 随机密钥生成函数
+        function generateRandomKey(length) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // DES密钥生成
+        function generateDESKey() {
+            const key = generateRandomKey(8);
+            document.getElementById('des-key').value = key;
+            alert('✅ DES密钥已生成（8字符）！');
+        }
+
+        // AES密钥生成
+        function generateAESKey() {
+            const keySize = parseInt(document.getElementById('aes-key-size').value);
+            const key = generateRandomKey(keySize);
+            document.getElementById('aes-key').value = key;
+            alert(`✅ AES密钥已生成（${keySize * 8}位）！`);
+        }
+
+        // RSA
+        function generateRSAKeys() {
+            const key_size = parseInt(document.getElementById('rsa-key-size').value);
+            
+            fetch('/api/modern/rsa/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key_size })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('rsa-public-key').value = data.public_key;
+                    document.getElementById('rsa-private-key').value = data.private_key;
+                    alert('密钥对生成成功！');
+                } else {
+                    alert(data.message);
+                }
+            });
+        }
+
+        function rsaEncrypt() {
+            const text = document.getElementById('rsa-encrypt-text').value;
+            const public_key = document.getElementById('rsa-public-key').value;
+            
+            if (!text || !public_key) {
+                alert('请输入文本和公钥');
+                return;
+            }
+            
+            fetch('/api/modern/rsa/encrypt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, public_key })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('rsa-encrypt-result').innerHTML = 
+                        `<h3>加密结果</h3><p style="word-break: break-all;">${data.result}</p>`;
+                    document.getElementById('rsa-decrypt-text').value = data.result;
+                } else {
+                    alert(data.message);
+                }
+            });
+        }
+
+        function rsaDecrypt() {
+            const text = document.getElementById('rsa-decrypt-text').value;
+            const private_key = document.getElementById('rsa-private-key').value;
+            
+            if (!text || !private_key) {
+                alert('请输入密文和私钥');
+                return;
+            }
+            
+            fetch('/api/modern/rsa/decrypt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, private_key })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('rsa-decrypt-result').innerHTML = 
+                        `<h3>解密结果</h3><p>${data.result}</p>`;
+                } else {
+                    alert(data.message);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
